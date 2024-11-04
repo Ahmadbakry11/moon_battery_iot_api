@@ -1,0 +1,208 @@
+openapi: 3.0.0
+info:
+  title: Moon Batteries API
+  version: '1.0'
+  description: API for managing Moon Batteries
+
+paths:
+  /moon_batteries/register:
+    post:
+      summary: Register a new Moon Battery
+      description: Creates a new Moon Battery with a unique serial number and auth token.
+      tags:
+        - Moon Batteries
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                moon_battery:
+                  type: object
+                  properties:
+                    mac_address:
+                      type: string
+                      example: "c5:c7:29:f2:ff:5d"
+                      description: "The MAC address of the moon battery."
+                  required:
+                    - mac_address
+      responses:
+        '201':
+          description: Moon battery created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  serial_number:
+                    type: string
+                    example: "SghpEvNgyy9Apr3iu97YvLgD"
+                    description: "Unique serial number assigned to the moon battery."
+                  auth_token:
+                    type: string
+                    example: "WaLdcYdPsm5vHHTkp6oo1xpMmJ5aXUQyCqGz"
+                    description: "Authentication token for the moon battery."
+        '422':
+          description: Invalid request - missing or incorrect parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Validation failed: Mac address invalid MAC address"
+                    description: "Error message describing the validation failure."
+  
+  /moon_batteries/{serial_number}/ping:
+    put:
+      summary: Ping Moon Battery to update last contact time
+      description: Updates the `last_contact_at` field of a Moon Battery to the current time. This is an authorized endpoint requiring a valid token in the Authorization header.
+      tags:
+        - Moon Batteries
+      parameters:
+        - name: serial_number
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "SghpEvNgyy9Apr3iu97YvLgD"
+          description: "The unique serial number of the moon battery to be pinged."
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          example: "99UGJxVwxKrA4mQktE2vinbhkNaoiLhbKGU8"
+          description: "Token used to authorize the request."
+      responses:
+        '204':
+          description: Successfully updated last_contact_at field, no content returned
+        '401':
+          description: Unauthorized - missing or invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "unauthorized battery"
+                    description: "Error message indicating lack of valid authentication."
+        '403':
+          description: Forbidden - invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example:  "Access Forbidden"
+                    description: "Error message indicating lack of valid authorization."
+        '404':
+          description: Moon Battery not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Moon Battery not found"
+                    description: "Error message when the specified moon battery serial number does not exist."
+                    
+  /moon_batteries/{serial_number}/configurations:
+    put:
+      summary: Update configurations for a Moon Battery
+      description: Updates one or more configuration settings for a specified Moon Battery. This is an authorized endpoint and requires a valid token in the Authorization header.
+      tags:
+        - Moon Batteries
+      parameters:
+        - name: serial_number
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "SghpEvNgyy9Apr3iu97YvLgD"
+          description: "The unique serial number of the moon battery whose configurations are being updated."
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          example: "Bearer WaLdcYdPsm5vHHTkp6oo1xpMmJ5aXUQyCqGz"
+          description: "Token used to authorize the request."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                configurations:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      config_name:
+                        type: string
+                        example: "powerfactor"
+                        description: "Name of the configuration parameter."
+                      config_value:
+                        type: string
+                        example: "0.7"
+                        description: "Value for the configuration parameter."
+                    required:
+                      - config_name
+                      - config_value
+                  description: "Array of configuration objects, each containing a config_name and config_value."
+      responses:
+        '204':
+          description: Successfully updated configurations, no content returned
+        '400':
+          description: Bad Request - missing or invalid configuration parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid configuration parameters"
+                    description: "Error message indicating missing or invalid parameters."
+        '401':
+          description: Unauthorized-missing or invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "unauthorized battery"
+                    description: "Error message indicating lack of valid authorization."
+        '403':
+          description: Forbidden - invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example:  "Access Forbidden"
+                    description: "Error message indicating lack of valid authorization."
+        '404':
+          description: Moon Battery not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Moon Battery not found"
+                    description: "Error message when the specified moon battery serial number does not exist."
+    
