@@ -50,9 +50,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
+                  error:
                     type: string
-                    example: "Validation failed: Mac address invalid MAC address"
+                    example: 
+                      message: "Validation failed: Mac address invalid MAC address"
                     description: "Error message describing the validation failure."
   
   /moon_batteries/{serial_number}/ping:
@@ -86,9 +87,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
+                  error:
                     type: string
-                    example: "unauthorized battery"
+                    example: 
+                      message: "unauthorized battery"
                     description: "Error message indicating lack of valid authentication."
         '403':
           description: Forbidden - invalid token
@@ -97,9 +99,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
+                  error:
                     type: string
-                    example:  "Access Forbidden"
+                    example:  
+                      message: "Access Forbidden"
                     description: "Error message indicating lack of valid authorization."
         '404':
           description: Moon Battery not found
@@ -108,9 +111,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
+                  error:
                     type: string
-                    example: "Moon Battery not found"
+                    example: 
+                      message: "Moon Battery not found"
                     description: "Error message when the specified moon battery serial number does not exist."
                     
   /moon_batteries/{serial_number}/configurations:
@@ -161,7 +165,7 @@ paths:
       responses:
         '204':
           description: Successfully updated configurations, no content returned
-        '400':
+        '422':
           description: Bad Request - missing or invalid configuration parameters
           content:
             application/json:
@@ -170,7 +174,8 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: "Invalid configuration parameters"
+                    example: 
+                      message: "Validation failed: Config name can't be blank"
                     description: "Error message indicating missing or invalid parameters."
         '401':
           description: Unauthorized-missing or invalid token
@@ -179,9 +184,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
+                  error:
                     type: string
-                    example: "unauthorized battery"
+                    example: 
+                      message: "unauthorized battery"
                     description: "Error message indicating lack of valid authorization."
         '403':
           description: Forbidden - invalid token
@@ -190,9 +196,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
+                  error:
                     type: string
-                    example:  "Access Forbidden"
+                    example:  
+                      message: "Access Forbidden"
                     description: "Error message indicating lack of valid authorization."
         '404':
           description: Moon Battery not found
@@ -201,8 +208,9 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
+                  error:
                     type: string
-                    example: "Moon Battery not found"
+                    example: 
+                      message: "Moon Battery not found"
                     description: "Error message when the specified moon battery serial number does not exist."
     
